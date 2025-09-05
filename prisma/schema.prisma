@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  createdTime     DateTime @default(now()) @map("created_time")
+  email           String   @unique
+  firstName       String?  @map("first_name")
+  lastName        String?  @map("last_name")
+  gender          String?
+  profileImageUrl String?  @map("profile_image_url")
+  userId          String   @unique @map("user_id")
+  subscription    String?
+  credits         String?
+
+  @@map("users")
+}
+
+model Subscription {
+  id                     Int      @id @default(autoincrement())
+  createdTime           DateTime @default(now()) @map("created_time")
+  modifiedTime          DateTime @updatedAt @map("modified_time")
+  
+  // Polar-specific fields
+  polarSubscriptionId    String   @unique @map("polar_subscription_id")
+  polarCustomerId       String   @map("polar_customer_id")
+  productId             String   @map("product_id")
+  status                String
+  amount                Int      // in cents
+  currency              String
+  recurringInterval     String   @map("recurring_interval")
+  currentPeriodStart    DateTime @map("current_period_start")
+  currentPeriodEnd      DateTime @map("current_period_end")
+  cancelAtPeriodEnd     Boolean  @default(false) @map("cancel_at_period_end")
+  canceledAt            DateTime? @map("canceled_at")
+  startedAt             DateTime @map("started_at")
+  endsAt                DateTime? @map("ends_at")
+  endedAt               DateTime? @map("ended_at")
+  checkoutId            String   @map("checkout_id")
+  
+  // User relationship (Clerk userId)
+  userId                String   @map("user_id")
+  email                 String
+  
+  // Optional metadata
+  metadata              String?  // JSON string
+  customFieldData       String?  @map("custom_field_data") // JSON string
+  discountId            String?  @map("discount_id")
+  customerCancellationReason String? @map("customer_cancellation_reason")
+  customerCancellationComment String? @map("customer_cancellation_comment")
+
+  @@map("subscriptions")
+}
+
+model SubscriptionPlan {
+  id          Int      @id @default(autoincrement())
+  createdTime DateTime @default(now()) @map("created_time")
+  planId      String?  @map("plan_id")
+  name        String?
+  description String?
+  amount      String?
+  currency    String?
+  interval    String?
+
+  @@map("subscriptions_plans")
+}
+
+model Invoice {
+  id            Int      @id @default(autoincrement())
+  createdTime   DateTime @default(now()) @map("created_time")
+  invoiceId     String?  @map("invoice_id")
+  subscriptionId String?  @map("subscription_id")
+  amountPaid    String?  @map("amount_paid")
+  amountDue     String?  @map("amount_due")
+  currency      String?
+  status        String?
+  email         String?
+  userId        String?  @map("user_id")
+
+  @@map("invoices")
+} 

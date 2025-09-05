@@ -1,0 +1,32 @@
+"use client";
+
+import PageWrapper from "@/components/wrapper/page-wrapper";
+import config from "@/config";
+// import { SignIn } from "@clerk/nextjs";
+import { SignIn } from "@/components/auth/sign-in";
+import { useRouter } from "next/navigation";
+
+export default function SignInPage() {
+  const router = useRouter();
+
+  if (!config?.auth?.enabled) {
+    router.back();
+  }
+
+  return (
+    <PageWrapper>
+      {/* clerk component */}
+      {/* <div className="flex min-w-screen justify-center my-[5rem]">
+        <SignIn
+          fallbackRedirectUrl="/"
+          signUpFallbackRedirectUrl="/dashboard"
+        />
+      </div> */}
+
+      {/* custom component */}
+      <div className="container flex h-screen w-screen flex-col items-center justify-center">
+        <SignIn />
+      </div>
+    </PageWrapper>
+  );
+}
