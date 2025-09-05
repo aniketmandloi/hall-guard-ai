@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle2, DollarSign } from "lucide-react";
+import { CheckCircle2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -50,7 +50,7 @@ const PricingHeader = ({
     {/* Pill badge */}
     <div className="mx-auto w-fit rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-4 py-1 mb-6">
       <div className="flex items-center gap-2 text-sm font-medium text-blue-900 dark:text-blue-200">
-        <DollarSign className="h-4 w-4" />
+        <Shield className="h-4 w-4" />
         <span>Pricing</span>
       </div>
     </div>
@@ -71,8 +71,11 @@ const PricingSwitch = ({ onSwitch }: PricingSwitchProps) => (
         <TabsTrigger value="0" className="w-full">
           Monthly
         </TabsTrigger>
-        <TabsTrigger value="1" className="w-full">
+        <TabsTrigger value="1" className="w-full relative" disabled>
           Yearly
+          <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+            Coming Soon
+          </span>
         </TabsTrigger>
       </TabsList>
     </Tabs>
@@ -130,7 +133,9 @@ const PricingCard = ({
                 "text-white": exclusive,
               })}
             >
-              ${isYearly ? yearlyPrice : monthlyPrice}
+              {monthlyPrice
+                ? `$${isYearly ? yearlyPrice : monthlyPrice}`
+                : "Custom"}
             </span>
             <span
               className={cn("text-muted-foreground", {
@@ -226,15 +231,17 @@ export default function Pricing() {
   const plans = [
     {
       title: "Basic",
-      monthlyPrice: 10,
-      yearlyPrice: 100,
+      monthlyPrice: 25,
+      yearlyPrice: 250,
       description:
-        "Perfect for individuals and small teams just getting started.",
+        "Perfect for small teams getting started with AI verification.",
       features: [
-        "All essential features",
-        "Up to 5 team members",
-        "20GB storage",
-        "Basic support",
+        "Up to 100 documents/month",
+        "Basic workflow (Analyst → Manager)",
+        "PDF, Word, TXT support",
+        "Email support",
+        "Basic audit trail",
+        "Standard compliance checks",
       ],
       priceIdMonthly: process.env.NEXT_PUBLIC_POLAR_BASIC_PRODUCT_ID,
       priceIdYearly: process.env.NEXT_PUBLIC_POLAR_BASIC_PRODUCT_ID,
@@ -242,31 +249,34 @@ export default function Pricing() {
     },
     {
       title: "Pro",
-      monthlyPrice: 25,
-      yearlyPrice: 250,
-      description: "Advanced features for growing teams and businesses.",
+      monthlyPrice: 100,
+      yearlyPrice: 1000,
+      description: "Advanced compliance features for growing enterprises.",
       features: [
-        "All Basic features",
-        "Up to 20 team members",
-        "50GB storage",
+        "Up to 500 documents/month",
+        "Full workflow (Analyst → Compliance → Manager)",
+        "Advanced compliance detection",
         "Priority support",
-        "Advanced analytics",
+        "Custom rule configuration",
+        "Advanced analytics & reporting",
+        "API access",
       ],
       priceIdMonthly: process.env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID,
       priceIdYearly: process.env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID,
-      actionLabel: "Get Pro",
+      actionLabel: "Go Professional",
       popular: true,
     },
     {
       title: "Enterprise",
-      description: "Custom solutions for large organizations.",
+      description: "Custom solutions for large-scale operations.",
       features: [
-        "All Pro features",
-        "Unlimited team members",
-        "Unlimited storage",
-        "24/7 dedicated support",
-        "Custom integrations",
-        "SLA guarantees",
+        "Unlimited documents",
+        "Custom integrations (Slack, M365, etc.)",
+        "Dedicated support & training",
+        "Custom compliance frameworks",
+        "SLA guarantees (99.9% uptime)",
+        "White-label options",
+        "On-premise deployment",
       ],
       actionLabel: "Contact Sales",
       priceIdMonthly: process.env.NEXT_PUBLIC_POLAR_ENTERPRISE_PRODUCT_ID,
@@ -279,8 +289,8 @@ export default function Pricing() {
     <section className="px-4">
       <div className="max-w-7xl mx-auto">
         <PricingHeader
-          title="Choose Your Plan"
-          subtitle="Select the perfect plan for your needs. All plans include a 14-day free trial."
+          title="Enterprise Document Analysis Plans"
+          subtitle="Comprehensive hallucination detection with role-based workflows. Contact sales for custom enterprise pricing and volume discounts."
         />
         <PricingSwitch onSwitch={togglePricingPeriod} />
         <motion.div

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Github, Sparkles } from "lucide-react";
+import { ArrowRight, FileText, Shield } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
@@ -25,8 +25,8 @@ export default function HeroSection() {
           className="mx-auto w-fit rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-4 py-1 mb-6"
         >
           <div className="flex items-center gap-2 text-sm font-medium text-blue-900 dark:text-blue-200">
-            <Sparkles className="h-4 w-4" />
-            <span>Your Product Tagline Here</span>
+            <Shield className="h-4 w-4" />
+            <span>Enterprise AI Verification Platform</span>
           </div>
         </motion.div>
 
@@ -37,8 +37,8 @@ export default function HeroSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 dark:from-white dark:via-blue-300 dark:to-white animate-gradient-x pb-2"
         >
-          Your Main Heading <br className="hidden sm:block" />
-          Goes Here
+          Stop AI Hallucinations <br className="hidden sm:block" />
+          Before They Reach Users
         </motion.h1>
 
         {/* Subtitle */}
@@ -48,8 +48,9 @@ export default function HeroSection() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
         >
-          Write a compelling description of your product or service here. Make
-          it clear, concise, and engaging for your visitors.
+          Enterprise-grade AI verification platform that detects factual errors, 
+          logical inconsistencies, and compliance violations in AI-generated content 
+          with role-based workflow management.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -59,35 +60,34 @@ export default function HeroSection() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-wrap justify-center items-center gap-4 pt-4"
         >
-          <Link href="/get-started">
+          <Link href="/dashboard/documents">
             <Button
               size="lg"
               className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-8 h-12"
             >
-              Get Started
+              Start Free Analysis
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
 
-          <Link href="/demo">
+          <Link href="/contact">
             <Button
               variant="outline"
               size="lg"
               className="rounded-full px-8 h-12 border-2"
             >
-              View Demo
+              Book Demo
               <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
             </Button>
           </Link>
 
           <Link
-            href="https://github.com/yourusername/yourrepo"
-            target="_blank"
+            href="/docs"
             className="flex items-center gap-2 rounded-full px-6 py-2 h-12 border-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="View on GitHub"
+            aria-label="Learn More"
           >
-            <Github className="w-5 h-5" aria-hidden="true" />
-            <span>Star on GitHub</span>
+            <FileText className="w-5 h-5" aria-hidden="true" />
+            <span>Learn More</span>
           </Link>
         </motion.div>
       </div>

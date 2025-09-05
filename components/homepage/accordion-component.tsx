@@ -1,5 +1,5 @@
 "use client";
-import { HelpCircle } from "lucide-react";
+import { Shield } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -10,24 +10,34 @@ import { motion } from "motion/react";
 
 const faqs = [
   {
-    question: "Do I get access to this landing page in the starter kit?",
+    question: "How accurate is the hallucination detection?",
     answer:
-      "Yes, this page isn't even a real landing page more so a template for you to build on.",
+      "Our multi-AI consensus algorithm achieves 95%+ accuracy by cross-validating content against multiple AI models and trusted knowledge sources, providing confidence scores and source citations for full transparency.",
   },
   {
-    question: "Is the starter kit regularly updated?",
+    question: "Which compliance frameworks are supported?",
     answer:
-      "Yes, we continuously update the starter kit with the latest features, security patches, and best practices to ensure you're always working with cutting-edge technology.",
+      "Hall Guard AI supports SOX, GDPR, HIPAA, and other major regulatory frameworks with rule-based pattern matching, automated violation flagging, and comprehensive audit trails for regulatory submissions.",
   },
   {
-    question: "Can I use this for commercial projects?",
+    question: "Can I integrate with existing document workflows?",
     answer:
-      "Absolutely! The starter kit comes with a commercial license, allowing you to use it in both personal and commercial projects without any restrictions.",
+      "Yes, our API-first architecture enables seamless integration with existing systems through webhooks, REST APIs, and future integrations with Slack, Microsoft 365, and Google Workspace.",
   },
   {
-    question: "What kind of support do you provide?",
+    question: "What file formats are supported for analysis?",
     answer:
-      "We offer comprehensive support through our Discord community, where you can get help from both our team and other developers using the starter kit.",
+      "Currently we support PDF, Microsoft Word (.docx), and plain text files up to 100MB. OCR for scanned documents and additional formats are planned for future releases.",
+  },
+  {
+    question: "How long does document analysis take?",
+    answer:
+      "Most documents are analyzed within 60 seconds, with larger files taking up to 2 minutes. You'll see real-time progress updates with estimated completion times throughout the process.",
+  },
+  {
+    question: "Is my document data secure and compliant?",
+    answer:
+      "Absolutely. We use AES-256 encryption at rest, TLS 1.3 in transit, and configurable retention policies. Analysis results are stored by default, but document storage is optional and fully configurable.",
   },
 ];
 
@@ -40,7 +50,7 @@ export default function AccordionComponent() {
           {/* Pill badge */}
           <div className="mx-auto w-fit rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-4 py-1 mb-6">
             <div className="flex items-center gap-2 text-sm font-medium text-blue-900 dark:text-blue-200">
-              <HelpCircle className="h-4 w-4" />
+              <Shield className="h-4 w-4" />
               <span>FAQ</span>
             </div>
           </div>
@@ -49,9 +59,9 @@ export default function AccordionComponent() {
             Frequently Asked Questions
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mt-4 max-w-2xl mx-auto">
-            Everything you need to know about the Next.js Starter Kit.
-            Can&apos;t find the answer you&apos;re looking for? Reach out to our
-            team.
+            Everything you need to know about Hall Guard AI's enterprise
+            hallucination detection platform. Can&apos;t find the answer
+            you&apos;re looking for? Contact our sales team.
           </p>
         </div>
 

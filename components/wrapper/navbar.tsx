@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@clerk/nextjs";
 import { Dialog } from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
-import { Github, Menu, Sparkles, Twitter, Youtube } from "lucide-react";
+import { FileText, Github, Menu, Shield, Users } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import ModeToggle from "../mode-toggle";
@@ -34,12 +34,12 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: "Dashboard",
     href: "/dashboard",
-    description: "Access your personal dashboard.",
+    description: "Access your analysis dashboard.",
   },
   {
-    title: "Blog",
-    href: "/blog",
-    description: "Read my interesting blog posts.",
+    title: "Documentation",
+    href: "/docs",
+    description: "Learn how to use Hall Guard AI effectively.",
   },
 ];
 
@@ -70,8 +70,8 @@ export default function NavBar() {
             <SheetContent side="left" className="w-[300px]">
               <SheetHeader className="pb-6 border-b">
                 <SheetTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-blue-600" />
-                  <span>Next Starter</span>
+                  <Shield className="h-5 w-5 text-blue-600" />
+                  <span>Hall Guard AI</span>
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-1 mt-6">
@@ -96,7 +96,7 @@ export default function NavBar() {
                     Links
                   </h2>
                   <Link
-                    href="https://github.com/michaelshimeles/nextjs14-starter-template"
+                    href="https://github.com/aniketmandloi/hall-guard-ai"
                     target="_blank"
                     prefetch={true}
                   >
@@ -108,25 +108,22 @@ export default function NavBar() {
                       GitHub
                     </Button>
                   </Link>
-                  <Link
-                    href="https://twitter.com/"
-                    target="_blank"
-                    prefetch={true}
-                  >
+                  <Link href="/docs" prefetch={true}>
                     <Button
                       variant="ghost"
                       className="w-full justify-start text-base font-normal h-11 border border-muted/40 mb-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition-colors"
                     >
-                      <Twitter className="h-4 w-4 mr-2" />X (Twitter)
+                      <FileText className="h-4 w-4 mr-2" />
+                      Documentation
                     </Button>
                   </Link>
-                  <Link href="" target="_blank" prefetch={true}>
+                  <Link href="/contact" prefetch={true}>
                     <Button
                       variant="ghost"
                       className="w-full justify-start text-base font-normal h-11 border border-muted/40 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition-colors"
                     >
-                      <Youtube className="h-4 w-4 mr-2" />
-                      YouTube
+                      <Users className="h-4 w-4 mr-2" />
+                      Contact Sales
                     </Button>
                   </Link>
                 </div>
@@ -144,16 +141,16 @@ export default function NavBar() {
             </SheetContent>
           </Dialog>
           <Link href="/" prefetch={true} className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-blue-600" />
-            <span className="font-semibold">Next Starter</span>
+            <Shield className="h-5 w-5 text-blue-600" />
+            <span className="font-semibold">Hall Guard AI</span>
           </Link>
         </div>
 
         {/* Logo - Desktop */}
         <div className="hidden lg:flex items-center gap-2">
           <Link href="/" prefetch={true} className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-blue-600" />
-            <span className="font-semibold">Next Starter</span>
+            <Shield className="h-5 w-5 text-blue-600" />
+            <span className="font-semibold">Hall Guard AI</span>
           </Link>
         </div>
 
@@ -186,7 +183,11 @@ export default function NavBar() {
           <Link href="/playground" prefetch={true}>
             <Button variant="ghost">AI Playground</Button>
           </Link>
-          <Link href="" prefetch={true}>
+          <Link
+            href="https://github.com/aniketmandloi/hall-guard-ai"
+            target="_blank"
+            prefetch={true}
+          >
             <Button variant="ghost" size="icon">
               <Github className="h-5 w-5" />
             </Button>
@@ -207,9 +208,6 @@ export default function NavBar() {
             </Link>
           )}
           {userId && <UserProfile />}
-          <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmichaelshimeles%2Fnextjs-starter-kit&env=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,CLERK_SECRET_KEY,NEXT_PUBLIC_CLERK_SIGN_IN_URL,NEXT_PUBLIC_CLERK_SIGN_UP_URL,NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,DATABASE_URL,NEXT_PUBLIC_BASE_URL,OPENAI_API_KEY&envDescription=You'll%20need%20api%20keys%20from%20Clerk%20Auth%2C%20Neon%20Postgres%2C%20%26%20OpenAI&project-name=next-starter&repository-name=next-starter&redirect-url=https%3A%2F%2Fwww.nextstarter.xyz%2F&demo-title=Next%20Starter&demo-description=The%20Ultimate%20Nextjs%2015%20Starter%20Kit%20for%20quickly%20building%20your%20SaaS%2C%20giving%20you%20time%20to%20focus%20on%20what%20really%20matters&demo-url=https%3A%2F%2Fwww.nextstarter.xyz%2F&demo-image=https%3A%2F%2Fdwdwn8b5ye.ufs.sh%2Ff%2FMD2AM9SEY8GucGJl7b5qyE7FjNDKYduLOG2QHWh3f5RgSi0c">
-            <img src="https://vercel.com/button" alt="Deploy with Vercel" />
-          </a>
         </div>
       </div>
     </motion.div>

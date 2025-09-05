@@ -1,28 +1,27 @@
 "use client";
 
-import { Computer, Network, Sparkles } from "lucide-react";
-import { FaBusinessTime } from "react-icons/fa";
+import { Database, Shield, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { OrbitingCirclesComponent } from "./orbiting-circles";
 
 const features = [
   {
-    name: "Build faster",
+    name: "Multi-Source Verification",
     description:
-      "Get up and running in no time with pre-configured settings and best practices. Say goodbye to setup and focus on what truly matters - building your application.",
-    icon: Computer,
+      "Cross-reference AI-generated content with trusted databases, Wikipedia, and industry-specific knowledge bases to ensure factual accuracy and detect hallucinations.",
+    icon: Database,
   },
   {
-    name: "Focus on business logic",
+    name: "Compliance-First Design",
     description:
-      "Concentrate on solving business problems instead of dealing with the repetitive setup.",
-    icon: FaBusinessTime,
+      "Built specifically for regulated industries with comprehensive audit trails, SOX/GDPR/HIPAA compliance detection, and enterprise-grade security standards.",
+    icon: Shield,
   },
   {
-    name: "Ready for scale",
+    name: "Role-Based Security",
     description:
-      "Prepare for growth from day one. With built-in optimizations and scalable architecture, your application will be ready to handle increased traffic and complexity.",
-    icon: Network,
+      "Structured analyst → compliance → manager approval workflow with automated routing, permission controls, and decision tracking for enterprise teams.",
+    icon: Users,
   },
 ];
 
@@ -42,17 +41,19 @@ export default function SideBySide() {
               {/* Pill badge */}
               <div className="mb-6 w-fit rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-4 py-1">
                 <div className="flex items-center gap-2 text-sm font-medium text-blue-900 dark:text-blue-200">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Why Choose Next Starter</span>
+                  <Shield className="h-4 w-4" />
+                  <span>Why Choose Hall Guard AI</span>
                 </div>
               </div>
 
               <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 dark:from-white dark:via-blue-300 dark:to-white pb-2">
-                A Faster Path to Production
+                Enterprise-Grade Hallucination Detection
               </h2>
               <p className="mt-6 text-lg text-gray-600 dark:text-gray-300">
-                Accelerate your development with our powerful Next.js starter
-                kit. Focus on building features, not infrastructure.
+                Stop AI hallucinations before they impact your business. Our
+                enterprise platform provides comprehensive verification,
+                compliance monitoring, and role-based workflows for
+                mission-critical AI content validation.
               </p>
               <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none">
                 {features.map((feature, index) => (
