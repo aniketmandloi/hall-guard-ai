@@ -11,7 +11,19 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
     return <>{children}</>;
   }
 
-  return <ClerkProvider dynamic>{children}</ClerkProvider>;
+  return (
+    <ClerkProvider 
+      dynamic
+      appearance={{
+        elements: {
+          rootBox: "mx-auto",
+          card: "shadow-none"
+        }
+      }}
+    >
+      {children}
+    </ClerkProvider>
+  );
 };
 
 export default AuthWrapper;

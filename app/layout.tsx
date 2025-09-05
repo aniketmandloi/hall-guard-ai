@@ -55,6 +55,20 @@ export default function RootLayout({
             >
               {children}
               <Toaster />
+              {/* Global CAPTCHA element for Clerk */}
+              <div 
+                id="clerk-captcha" 
+                style={{ 
+                  position: 'fixed', 
+                  top: '-9999px', 
+                  left: '-9999px',
+                  visibility: 'hidden',
+                  pointerEvents: 'none'
+                }}
+                data-cl-theme="auto" 
+                data-cl-size="flexible" 
+                data-cl-language="auto"
+              ></div>
             </ThemeProvider>
           </Provider>
           <Analytics />

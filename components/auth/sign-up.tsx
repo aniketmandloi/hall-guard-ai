@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,8 +40,27 @@ const formSchema = z.object({
 export function SignUp() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [isLoading, setIsLoading] = useState(false);
+  const [captchaReady, setCaptchaReady] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Ensure DOM is ready and CAPTCHA element exists
+    const checkCaptchaElement = () => {
+      const captchaElement = document.getElementById('clerk-captcha');
+      if (captchaElement) {
+        setCaptchaReady(true);
+        console.log('CAPTCHA element found and ready');
+      } else {
+        console.warn('CAPTCHA element not found, retrying...');
+        setTimeout(checkCaptchaElement, 100);
+      }
+    };
+    
+    if (isLoaded) {
+      checkCaptchaElement();
+    }
+  }, [isLoaded]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,6 +77,12 @@ export function SignUp() {
 
     try {
       setIsLoading(true);
+
+      // Ensure CAPTCHA element exists before creating sign-up
+      const captchaElement = document.getElementById('clerk-captcha');
+      if (!captchaElement) {
+        console.warn('clerk-captcha element not found, CAPTCHA will fall back to invisible mode');
+      }
 
       const result = await signUp.create({
         emailAddress: values.email,
