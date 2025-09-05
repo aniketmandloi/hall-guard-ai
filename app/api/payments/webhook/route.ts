@@ -30,9 +30,9 @@ async function handleSubscriptionEvent(
   console.log("📦 Payload data:", JSON.stringify(data, null, 2));
 
   try {
-    // Extract user ID from customer external ID (this should be the Clerk user ID)
-    const userId = data.customer?.externalId;
-    const customerEmail = data.customer?.email;
+    // Extract user ID from metadata (this should be the Clerk user ID)
+    const userId = data.metadata?.userId || data.customer?.metadata?.userId;
+    const customerEmail = data.customer?.email || data.metadata?.email;
 
     if (!userId || !customerEmail) {
       console.error("Missing userId or email from webhook payload");
@@ -45,29 +45,29 @@ async function handleSubscriptionEvent(
     // Build subscription data for Prisma
     const subscriptionData = {
       polarSubscriptionId: data.id,
-      polarCustomerId: data.customerId,
-      productId: data.productId,
+      polarCustomerId: data.customer_id,
+      productId: data.product_id,
       status: data.status,
       amount: data.amount,
       currency: data.currency,
-      recurringInterval: data.recurringInterval,
-      currentPeriodStart: new Date(data.currentPeriodStart),
-      currentPeriodEnd: new Date(data.currentPeriodEnd),
-      cancelAtPeriodEnd: data.cancelAtPeriodEnd || false,
-      canceledAt: safeParseDate(data.canceledAt),
-      startedAt: safeParseDate(data.startedAt) || new Date(),
-      endsAt: safeParseDate(data.endsAt),
-      endedAt: safeParseDate(data.endedAt),
-      checkoutId: data.checkoutId || "",
+      recurringInterval: data.recurring_interval,
+      currentPeriodStart: new Date(data.current_period_start),
+      currentPeriodEnd: new Date(data.current_period_end),
+      cancelAtPeriodEnd: data.cancel_at_period_end || false,
+      canceledAt: safeParseDate(data.canceled_at),
+      startedAt: safeParseDate(data.started_at) || new Date(),
+      endsAt: safeParseDate(data.ends_at),
+      endedAt: safeParseDate(data.ended_at),
+      checkoutId: data.checkout_id || "",
       userId,
       email: customerEmail,
       metadata: data.metadata ? JSON.stringify(data.metadata) : null,
-      customFieldData: data.customFieldData
-        ? JSON.stringify(data.customFieldData)
+      customFieldData: data.custom_field_data
+        ? JSON.stringify(data.custom_field_data)
         : null,
-      discountId: data.discountId || null,
-      customerCancellationReason: data.customerCancellationReason || null,
-      customerCancellationComment: data.customerCancellationComment || null,
+      discountId: data.discount_id || null,
+      customerCancellationReason: data.customer_cancellation_reason || null,
+      customerCancellationComment: data.customer_cancellation_comment || null,
     };
 
     console.log("💾 Final subscription data:", {
@@ -114,6 +114,9 @@ async function handleSubscriptionEvent(
     }
 
     console.log("✅ Upserted subscription:", data.id);
+    console.log(
+      `🎉 Successfully processed ${type} for user: ${userId} (${customerEmail})`
+    );
     return NextResponse.json({
       status: 200,
       message: `Subscription ${type} processed successfully`,
@@ -133,8 +136,8 @@ async function handleCheckoutCompletedEvent(data: any) {
   console.log("📦 Order data:", JSON.stringify(data, null, 2));
 
   try {
-    const userId = data.customer?.externalId;
-    const customerEmail = data.customer?.email;
+    const userId = data.metadata?.userId || data.customer?.metadata?.userId;
+    const customerEmail = data.customer?.email || data.metadata?.email;
 
     if (!userId || !customerEmail) {
       console.error("Missing userId or email from order webhook payload");
@@ -153,22 +156,22 @@ async function handleCheckoutCompletedEvent(data: any) {
       // Create subscription record from order data
       const subscriptionData = {
         polarSubscriptionId: data.subscription.id,
-        polarCustomerId: data.customerId,
-        productId: data.subscription.productId || data.products?.[0]?.productId,
+        polarCustomerId: data.customer_id,
+        productId: data.subscription.product_id || data.product_id,
         status: data.subscription.status || "active",
         amount: data.amount,
         currency: data.currency,
-        recurringInterval: data.subscription.recurringInterval || "month",
+        recurringInterval: data.subscription.recurring_interval || "month",
         currentPeriodStart: new Date(
-          data.subscription.currentPeriodStart || data.createdAt
+          data.subscription.current_period_start || data.created_at
         ),
         currentPeriodEnd: new Date(
-          data.subscription.currentPeriodEnd ||
+          data.subscription.current_period_end ||
             new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
         ),
-        cancelAtPeriodEnd: false,
-        startedAt: new Date(data.subscription.startedAt || data.createdAt),
-        checkoutId: data.checkoutId || "",
+        cancelAtPeriodEnd: data.subscription.cancel_at_period_end || false,
+        startedAt: new Date(data.subscription.started_at || data.created_at),
+        checkoutId: data.checkout_id || "",
         userId,
         email: customerEmail,
         metadata: data.metadata ? JSON.stringify(data.metadata) : null,
@@ -195,6 +198,9 @@ async function handleCheckoutCompletedEvent(data: any) {
       });
 
       console.log("✅ Subscription created from order for user:", userId);
+      console.log(
+        `🎉 Successfully processed order with subscription for user: ${userId} (${customerEmail})`
+      );
       return NextResponse.json({
         status: 200,
         message: "Order processed and subscription created successfully",
@@ -270,6 +276,7 @@ async function webhooksHandler(
 
       case "order.created":
       case "order.paid":
+      case "order.updated":
         return handleCheckoutCompletedEvent(data);
 
       default:

@@ -47,8 +47,8 @@ export default function Cancel() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
             >
-              No worries! Your payment was cancelled and you haven't been
-              charged. You can try again whenever you're ready.
+              No worries! Your payment was cancelled and you haven&apos;t been
+              charged. You can try again whenever you&apos;re ready.
             </motion.p>
 
             {/* Action Buttons */}

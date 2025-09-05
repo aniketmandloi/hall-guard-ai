@@ -6,6 +6,8 @@ import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
 export async function POST(req: Request) {
+  console.log("🔄 Clerk webhook request received");
+
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
@@ -55,6 +57,10 @@ export async function POST(req: Request) {
   const { id } = evt.data;
   const eventType = evt.type;
 
+  console.log(
+    `✅ Clerk webhook verified. Event type: ${eventType}, User ID: ${id}`
+  );
+
   switch (eventType) {
     case "user.created":
       try {
@@ -66,6 +72,7 @@ export async function POST(req: Request) {
           user_id: payload?.data?.id,
         });
 
+        console.log("🎉 User successfully created in database");
         return NextResponse.json({
           status: 200,
           message: "User info inserted",

@@ -117,7 +117,8 @@ export default function SettingsPage() {
                             type="email"
                             placeholder="Your email"
                             defaultValue={
-                              user?.user?.emailAddresses?.[0]?.emailAddress!
+                              user?.user?.emailAddresses?.[0]?.emailAddress ||
+                              ""
                             }
                           />
                         </div>
@@ -126,7 +127,7 @@ export default function SettingsPage() {
                           <Input
                             id="username"
                             placeholder="Username"
-                            defaultValue={user?.user?.username!}
+                            defaultValue={user?.user?.username || ""}
                           />
                         </div>
                       </div>

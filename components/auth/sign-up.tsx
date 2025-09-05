@@ -47,16 +47,16 @@ export function SignUp() {
   useEffect(() => {
     // Ensure DOM is ready and CAPTCHA element exists
     const checkCaptchaElement = () => {
-      const captchaElement = document.getElementById('clerk-captcha');
+      const captchaElement = document.getElementById("clerk-captcha");
       if (captchaElement) {
         setCaptchaReady(true);
-        console.log('CAPTCHA element found and ready');
+        console.log("CAPTCHA element found and ready");
       } else {
-        console.warn('CAPTCHA element not found, retrying...');
+        console.warn("CAPTCHA element not found, retrying...");
         setTimeout(checkCaptchaElement, 100);
       }
     };
-    
+
     if (isLoaded) {
       checkCaptchaElement();
     }
@@ -79,9 +79,11 @@ export function SignUp() {
       setIsLoading(true);
 
       // Ensure CAPTCHA element exists before creating sign-up
-      const captchaElement = document.getElementById('clerk-captcha');
+      const captchaElement = document.getElementById("clerk-captcha");
       if (!captchaElement) {
-        console.warn('clerk-captcha element not found, CAPTCHA will fall back to invisible mode');
+        console.warn(
+          "clerk-captcha element not found, CAPTCHA will fall back to invisible mode"
+        );
       }
 
       const result = await signUp.create({

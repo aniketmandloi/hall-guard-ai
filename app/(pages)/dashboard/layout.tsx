@@ -11,7 +11,7 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   const user = await currentUser();
-  const { authorized } = await isAuthorized(user?.id!);
+  const { authorized } = await isAuthorized(user?.id || "");
 
   if (!authorized) {
     console.log("not authorized");
