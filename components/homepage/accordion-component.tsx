@@ -59,7 +59,7 @@ export default function AccordionComponent() {
             Frequently Asked Questions
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mt-4 max-w-2xl mx-auto">
-            Everything you need to know about Hall Guard AI's enterprise
+            Everything you need to know about Hall Guard AI&apos;s enterprise
             hallucination detection platform. Can&apos;t find the answer
             you&apos;re looking for? Contact our sales team.
           </p>
