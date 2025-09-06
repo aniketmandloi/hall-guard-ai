@@ -14,6 +14,51 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum UserRole {
+  ANALYST
+  COMPLIANCE
+  MANAGER
+  ADMIN
+}
+
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum WorkflowStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum AnalysisType {
+  FACTUAL
+  LOGICAL
+  COMPLIANCE
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum SourceType {
+  WIKIPEDIA
+  GOOGLE_FACT_CHECK
+  CUSTOM
+}
+
+enum VerificationResult {
+  CONFIRMED
+  DISPUTED
+  UNKNOWN
+}
+
 model User {
   id              Int      @id @default(autoincrement())
   createdTime     DateTime @default(now()) @map("created_time")
@@ -27,7 +72,7 @@ model User {
   credits         String?
 
   // Hall Guard AI specific fields
-  role           String  @default("analyst") // analyst, compliance, manager, admin
+  role           UserRole @default(ANALYST)
   department     String?
   organizationId Int?    @map("organization_id")
 
@@ -117,7 +162,7 @@ model Document {
   fileHash         String @unique @map("file_hash") @db.VarChar(64)
 
   // Processing status
-  status                String    @default("uploaded") @db.VarChar(50) // uploaded, processing, completed, failed
+  status                DocumentStatus @default(UPLOADED)
   processingStartedAt   DateTime? @map("processing_started_at")
   processingCompletedAt DateTime? @map("processing_completed_at")
 
@@ -128,7 +173,7 @@ model Document {
   // User and workflow
   uploadedBy      String  @map("uploaded_by") @db.VarChar(255) // Clerk user ID
   currentAssignee String? @map("current_assignee") @db.VarChar(255)
-  workflowStatus  String  @default("draft") @map("workflow_status") @db.VarChar(50)
+  workflowStatus  WorkflowStatus @default(DRAFT) @map("workflow_status")
 
   // Metadata
   title        String?   @db.VarChar(500)
@@ -181,14 +226,14 @@ model AnalysisResult {
   chunkId     Int?     @map("chunk_id")
 
   // Analysis metadata
-  analysisType    String  @map("analysis_type") @db.VarChar(50) // factual, logical, compliance
+  analysisType    AnalysisType @map("analysis_type")
   analyzerModel   String  @map("analyzer_model") @db.VarChar(100) // claude-3, gpt-4, etc.
   analysisVersion String? @map("analysis_version") @db.VarChar(50)
 
   // Results
   isFlagged       Boolean  @default(false) @map("is_flagged")
   confidenceScore Decimal? @map("confidence_score") @db.Decimal(3, 2) // 0.00 to 1.00
-  riskLevel       String?  @map("risk_level") @db.VarChar(20) // low, medium, high
+  riskLevel       RiskLevel? @map("risk_level")
 
   // Details
   issueDescription    String? @map("issue_description") @db.Text
@@ -216,10 +261,10 @@ model AnalysisResult {
 model FactCheckSource {
   id                 Int      @id @default(autoincrement())
   analysisResultId   Int      @map("analysis_result_id")
-  sourceType         String   @map("source_type") @db.VarChar(50) // wikipedia, google_fact_check, custom
+  sourceType         SourceType @map("source_type")
   sourceUrl          String?  @map("source_url") @db.VarChar(500)
   sourceTitle        String?  @map("source_title") @db.VarChar(255)
-  verificationResult String?  @map("verification_result") @db.VarChar(50) // confirmed, disputed, unknown
+  verificationResult VerificationResult? @map("verification_result")
   confidenceScore    Decimal? @map("confidence_score") @db.Decimal(3, 2)
   retrievedAt        DateTime @default(now()) @map("retrieved_at")
   sourceData         Json?    @map("source_data") // JSONB for additional source metadata
