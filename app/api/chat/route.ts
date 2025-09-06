@@ -37,7 +37,6 @@ export async function POST(req: Request) {
     - Prioritize user safety and ethical considerations
   `;
 
-
   const role =
     messages?.[messages?.length - 1].role === "user" ? "user" : "assistant";
 

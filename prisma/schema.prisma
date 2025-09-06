@@ -9,9 +9,54 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  ANALYST
+  COMPLIANCE
+  MANAGER
+  ADMIN
+}
+
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum WorkflowStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum AnalysisType {
+  FACTUAL
+  LOGICAL
+  COMPLIANCE
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum SourceType {
+  WIKIPEDIA
+  GOOGLE_FACT_CHECK
+  CUSTOM
+}
+
+enum VerificationResult {
+  CONFIRMED
+  DISPUTED
+  UNKNOWN
 }
 
 model User {
@@ -26,40 +71,51 @@ model User {
   subscription    String?
   credits         String?
 
+  // Hall Guard AI specific fields
+  role           UserRole @default(ANALYST)
+  department     String?
+  organizationId Int?    @map("organization_id")
+
+  // Relations
+  uploadedDocuments   Document[]           @relation("DocumentUploader")
+  assignedDocuments   Document[]           @relation("DocumentAssignee")
+  workflowTransitions WorkflowTransition[]
+  comments            DocumentComment[]
+
   @@map("users")
 }
 
 model Subscription {
-  id                     Int      @id @default(autoincrement())
-  createdTime           DateTime @default(now()) @map("created_time")
-  modifiedTime          DateTime @updatedAt @map("modified_time")
-  
+  id           Int      @id @default(autoincrement())
+  createdTime  DateTime @default(now()) @map("created_time")
+  modifiedTime DateTime @updatedAt @map("modified_time")
+
   // Polar-specific fields
-  polarSubscriptionId    String   @unique @map("polar_subscription_id")
-  polarCustomerId       String   @map("polar_customer_id")
-  productId             String   @map("product_id")
-  status                String
-  amount                Int      // in cents
-  currency              String
-  recurringInterval     String   @map("recurring_interval")
-  currentPeriodStart    DateTime @map("current_period_start")
-  currentPeriodEnd      DateTime @map("current_period_end")
-  cancelAtPeriodEnd     Boolean  @default(false) @map("cancel_at_period_end")
-  canceledAt            DateTime? @map("canceled_at")
-  startedAt             DateTime @map("started_at")
-  endsAt                DateTime? @map("ends_at")
-  endedAt               DateTime? @map("ended_at")
-  checkoutId            String   @map("checkout_id")
-  
+  polarSubscriptionId String    @unique @map("polar_subscription_id")
+  polarCustomerId     String    @map("polar_customer_id")
+  productId           String    @map("product_id")
+  status              String
+  amount              Int // in cents
+  currency            String
+  recurringInterval   String    @map("recurring_interval")
+  currentPeriodStart  DateTime  @map("current_period_start")
+  currentPeriodEnd    DateTime  @map("current_period_end")
+  cancelAtPeriodEnd   Boolean   @default(false) @map("cancel_at_period_end")
+  canceledAt          DateTime? @map("canceled_at")
+  startedAt           DateTime  @map("started_at")
+  endsAt              DateTime? @map("ends_at")
+  endedAt             DateTime? @map("ended_at")
+  checkoutId          String    @map("checkout_id")
+
   // User relationship (Clerk userId)
-  userId                String   @map("user_id")
-  email                 String
-  
+  userId String @map("user_id")
+  email  String
+
   // Optional metadata
-  metadata              String?  // JSON string
-  customFieldData       String?  @map("custom_field_data") // JSON string
-  discountId            String?  @map("discount_id")
-  customerCancellationReason String? @map("customer_cancellation_reason")
+  metadata                    String? // JSON string
+  customFieldData             String? @map("custom_field_data") // JSON string
+  discountId                  String? @map("discount_id")
+  customerCancellationReason  String? @map("customer_cancellation_reason")
   customerCancellationComment String? @map("customer_cancellation_comment")
 
   @@map("subscriptions")
@@ -79,16 +135,203 @@ model SubscriptionPlan {
 }
 
 model Invoice {
-  id            Int      @id @default(autoincrement())
-  createdTime   DateTime @default(now()) @map("created_time")
-  invoiceId     String?  @map("invoice_id")
+  id             Int      @id @default(autoincrement())
+  createdTime    DateTime @default(now()) @map("created_time")
+  invoiceId      String?  @map("invoice_id")
   subscriptionId String?  @map("subscription_id")
-  amountPaid    String?  @map("amount_paid")
-  amountDue     String?  @map("amount_due")
-  currency      String?
-  status        String?
-  email         String?
-  userId        String?  @map("user_id")
+  amountPaid     String?  @map("amount_paid")
+  amountDue      String?  @map("amount_due")
+  currency       String?
+  status         String?
+  email          String?
+  userId         String?  @map("user_id")
 
   @@map("invoices")
-} 
+}
+
+model Document {
+  id          Int      @id @default(autoincrement())
+  createdTime DateTime @default(now()) @map("created_time")
+  updatedTime DateTime @updatedAt @map("updated_time")
+
+  // Document metadata
+  filename         String @db.VarChar(255)
+  originalFilename String @map("original_filename") @db.VarChar(255)
+  fileType         String @map("file_type") @db.VarChar(50)
+  fileSize         BigInt @map("file_size")
+  fileHash         String @unique @map("file_hash") @db.VarChar(64)
+
+  // Processing status
+  status                DocumentStatus @default(UPLOADED)
+  processingStartedAt   DateTime? @map("processing_started_at")
+  processingCompletedAt DateTime? @map("processing_completed_at")
+
+  // Content
+  extractedText String? @map("extracted_text") @db.Text
+  chunkCount    Int?    @map("chunk_count")
+
+  // User and workflow
+  uploadedBy      String  @map("uploaded_by") @db.VarChar(255) // Clerk user ID
+  currentAssignee String? @map("current_assignee") @db.VarChar(255)
+  workflowStatus  WorkflowStatus @default(DRAFT) @map("workflow_status")
+
+  // Metadata
+  title        String?   @db.VarChar(500)
+  author       String?   @db.VarChar(255)
+  documentDate DateTime? @map("document_date")
+  tags         String[] // PostgreSQL array
+
+  // Storage
+  storagePath        String?   @map("storage_path") @db.VarChar(500)
+  retentionExpiresAt DateTime? @map("retention_expires_at")
+
+  // Relations
+  uploader            User                 @relation("DocumentUploader", fields: [uploadedBy], references: [userId])
+  assignee            User?                @relation("DocumentAssignee", fields: [currentAssignee], references: [userId])
+  chunks              DocumentChunk[]
+  analysisResults     AnalysisResult[]
+  workflowTransitions WorkflowTransition[]
+  comments            DocumentComment[]
+
+  @@index([uploadedBy], name: "idx_documents_uploader")
+  @@index([status], name: "idx_documents_status")
+  @@index([workflowStatus], name: "idx_documents_workflow_status")
+  @@index([createdTime], name: "idx_documents_created_time")
+  @@map("documents")
+}
+
+model DocumentChunk {
+  id            Int     @id @default(autoincrement())
+  documentId    Int     @map("document_id")
+  chunkIndex    Int     @map("chunk_index")
+  content       String  @db.Text
+  tokenCount    Int?    @map("token_count")
+  startPosition Int?    @map("start_position")
+  endPosition   Int?    @map("end_position")
+  semanticType  String? @map("semantic_type") @db.VarChar(50) // paragraph, heading, list, table
+
+  // Relations
+  document        Document         @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  analysisResults AnalysisResult[]
+
+  @@unique([documentId, chunkIndex], name: "unique_document_chunk")
+  @@index([documentId], name: "idx_chunks_document")
+  @@map("document_chunks")
+}
+
+model AnalysisResult {
+  id          Int      @id @default(autoincrement())
+  createdTime DateTime @default(now()) @map("created_time")
+  documentId  Int      @map("document_id")
+  chunkId     Int?     @map("chunk_id")
+
+  // Analysis metadata
+  analysisType    AnalysisType @map("analysis_type")
+  analyzerModel   String  @map("analyzer_model") @db.VarChar(100) // claude-3, gpt-4, etc.
+  analysisVersion String? @map("analysis_version") @db.VarChar(50)
+
+  // Results
+  isFlagged       Boolean  @default(false) @map("is_flagged")
+  confidenceScore Decimal? @map("confidence_score") @db.Decimal(3, 2) // 0.00 to 1.00
+  riskLevel       RiskLevel? @map("risk_level")
+
+  // Details
+  issueDescription    String? @map("issue_description") @db.Text
+  explanation         String? @db.Text
+  suggestedCorrection String? @map("suggested_correction") @db.Text
+  sourceCitations     Json?   @map("source_citations") // JSONB for source data
+
+  // Metadata
+  processingTimeMs       Int?     @map("processing_time_ms")
+  externalSourcesChecked String[] @map("external_sources_checked")
+
+  // Relations
+  document         Document          @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  chunk            DocumentChunk?    @relation(fields: [chunkId], references: [id], onDelete: Cascade)
+  factCheckSources FactCheckSource[]
+  comments         DocumentComment[]
+
+  @@index([documentId], name: "idx_analysis_document")
+  @@index([isFlagged], name: "idx_analysis_flagged")
+  @@index([analysisType], name: "idx_analysis_type")
+  @@index([riskLevel], name: "idx_analysis_risk_level")
+  @@map("analysis_results")
+}
+
+model FactCheckSource {
+  id                 Int      @id @default(autoincrement())
+  analysisResultId   Int      @map("analysis_result_id")
+  sourceType         SourceType @map("source_type")
+  sourceUrl          String?  @map("source_url") @db.VarChar(500)
+  sourceTitle        String?  @map("source_title") @db.VarChar(255)
+  verificationResult VerificationResult? @map("verification_result")
+  confidenceScore    Decimal? @map("confidence_score") @db.Decimal(3, 2)
+  retrievedAt        DateTime @default(now()) @map("retrieved_at")
+  sourceData         Json?    @map("source_data") // JSONB for additional source metadata
+
+  // Relations
+  analysisResult AnalysisResult @relation(fields: [analysisResultId], references: [id], onDelete: Cascade)
+
+  @@index([analysisResultId], name: "idx_fact_check_analysis")
+  @@index([sourceType], name: "idx_fact_check_source_type")
+  @@map("fact_check_sources")
+}
+
+model WorkflowTransition {
+  id          Int      @id @default(autoincrement())
+  createdTime DateTime @default(now()) @map("created_time")
+  documentId  Int      @map("document_id")
+
+  fromStatus WorkflowStatus? @map("from_status")
+  toStatus   WorkflowStatus  @map("to_status")
+
+  userId   String   @map("user_id") @db.VarChar(255) // Clerk user ID
+  userRole UserRole @map("user_role")
+
+  comment        String? @db.Text
+  transitionData Json?   @map("transition_data") // Additional context data
+
+  // Audit fields
+  ipAddress String? @map("ip_address") @db.VarChar(45)
+  userAgent String? @map("user_agent") @db.Text
+
+  // Relations
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [userId])
+
+  @@index([documentId], name: "idx_transitions_document")
+  @@index([userId], name: "idx_transitions_user")
+  @@index([createdTime], name: "idx_transitions_created_time")
+  @@map("workflow_transitions")
+}
+
+model DocumentComment {
+  id          Int      @id @default(autoincrement())
+  createdTime DateTime @default(now()) @map("created_time")
+  updatedTime DateTime @updatedAt @map("updated_time")
+
+  documentId       Int  @map("document_id")
+  analysisResultId Int? @map("analysis_result_id")
+  parentCommentId  Int? @map("parent_comment_id")
+
+  userId     String  @map("user_id") @db.VarChar(255) // Clerk user ID
+  content    String  @db.Text
+  isInternal Boolean @default(true) @map("is_internal")
+
+  // Position in document for inline comments
+  startPosition Int? @map("start_position")
+  endPosition   Int? @map("end_position")
+
+  // Relations
+  document       Document          @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  analysisResult AnalysisResult?   @relation(fields: [analysisResultId], references: [id], onDelete: Cascade)
+  parentComment  DocumentComment?  @relation("CommentThread", fields: [parentCommentId], references: [id])
+  childComments  DocumentComment[] @relation("CommentThread")
+  user           User              @relation(fields: [userId], references: [userId])
+
+  @@index([documentId], name: "idx_comments_document")
+  @@index([analysisResultId], name: "idx_comments_analysis_result")
+  @@index([parentCommentId], name: "idx_comments_parent")
+  @@index([userId], name: "idx_comments_user")
+  @@map("document_comments")
+}
