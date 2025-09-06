@@ -20,6 +20,7 @@ import {
   UserRole,
   WorkflowStatus,
   DocumentStatus,
+  RiskLevel,
 } from "@prisma/client";
 
 /**
@@ -348,10 +349,7 @@ export const queryDocumentComments = async (
           take: 5, // Limit child comments in list view
         },
       },
-      orderBy: [
-        { parentCommentId: { sort: "asc", nulls: "first" } },
-        { createdTime: "desc" },
-      ],
+      orderBy: [{ parentCommentId: "asc" }, { createdTime: "desc" }],
       take: validatedQuery.limit,
       skip: validatedQuery.offset,
     });
@@ -961,7 +959,7 @@ export const generateComplianceReport = async (
           ...documentFilter,
           analysisResults: {
             some: {
-              riskLevel: "HIGH",
+              riskLevel: RiskLevel.HIGH,
               isFlagged: true,
             },
           },
