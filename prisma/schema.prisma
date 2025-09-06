@@ -282,11 +282,11 @@ model WorkflowTransition {
   createdTime DateTime @default(now()) @map("created_time")
   documentId  Int      @map("document_id")
 
-  fromStatus String? @map("from_status") @db.VarChar(50)
-  toStatus   String  @map("to_status") @db.VarChar(50)
+  fromStatus WorkflowStatus? @map("from_status")
+  toStatus   WorkflowStatus  @map("to_status")
 
-  userId   String @map("user_id") @db.VarChar(255) // Clerk user ID
-  userRole String @map("user_role") @db.VarChar(50)
+  userId   String   @map("user_id") @db.VarChar(255) // Clerk user ID
+  userRole UserRole @map("user_role")
 
   comment        String? @db.Text
   transitionData Json?   @map("transition_data") // Additional context data
