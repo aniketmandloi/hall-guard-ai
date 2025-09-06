@@ -10,6 +10,12 @@ import {
 export class DocumentChunkingService {
   private options: ChunkingOptions;
 
+  // Cache regex patterns to avoid recompilation
+  private static readonly ABBREVIATION_PATTERN = new RegExp(
+    `\\b(Dr|Prof|Mr|Mrs|Ms|vs|etc|e\\.g|i\\.e|Inc|Ltd|Co)\\.`,
+    "gi"
+  );
+
   constructor(options: ChunkingOptions = DEFAULT_CHUNKING_OPTIONS) {
     this.options = { ...DEFAULT_CHUNKING_OPTIONS, ...options };
   }
@@ -191,28 +197,9 @@ export class DocumentChunkingService {
 
   private splitIntoSentences(text: string): string[] {
     // Enhanced sentence splitting that handles common abbreviations
-    const abbreviations = [
-      "Dr",
-      "Prof",
-      "Mr",
-      "Mrs",
-      "Ms",
-      "vs",
-      "etc",
-      "e.g",
-      "i.e",
-      "Inc",
-      "Ltd",
-      "Co",
-    ];
-    const abbreviationPattern = new RegExp(
-      `\\b(${abbreviations.join("|")})\\.`,
-      "gi"
-    );
-
     // Replace abbreviations temporarily
     const processedText = text.replace(
-      abbreviationPattern,
+      DocumentChunkingService.ABBREVIATION_PATTERN,
       (_match, abbr) => `${abbr}<!DOT!>`
     );
 

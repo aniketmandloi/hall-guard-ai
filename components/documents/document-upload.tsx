@@ -73,7 +73,7 @@ export function DocumentUpload({
 
         const newFiles: DocumentFile[] = acceptedFiles.map((file) => ({
           file,
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
           uploadStatus: "pending" as const,
         }));
 
