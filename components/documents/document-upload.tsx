@@ -22,6 +22,7 @@ import {
   MAX_FILE_SIZE,
   SupportedFileType,
   FileValidationResult,
+  MIME_TYPE_MAP,
 } from "@/lib/types/document-processing";
 
 interface DocumentFile {
@@ -121,7 +122,11 @@ export function DocumentUpload({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: SUPPORTED_FILE_TYPES.reduce((acc, type) => {
-      acc[`application/${type}`] = [`.${type}`];
+      // Use correct MIME types from MIME_TYPE_MAP
+      const mimeTypes = MIME_TYPE_MAP[type];
+      mimeTypes.forEach((mimeType) => {
+        acc[mimeType] = [`.${type}`];
+      });
       return acc;
     }, {} as Record<string, string[]>),
     maxFiles,

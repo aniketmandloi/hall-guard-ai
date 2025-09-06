@@ -94,10 +94,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Extract filename from storage path safely
+    let storedFilename: string;
+    if (uploadResult.filePath && typeof uploadResult.filePath === "string") {
+      const pathParts = uploadResult.filePath.split("/");
+      storedFilename = pathParts.length > 0 ? pathParts.pop()! : filename;
+    } else {
+      return NextResponse.json(
+        { error: "Invalid file path returned from storage service" },
+        { status: 500 }
+      );
+    }
+
     // Create database record
     const document = await prisma.document.create({
       data: {
-        filename: uploadResult.filePath!.split("/").pop()!,
+        filename: storedFilename,
         originalFilename: filename,
         fileType: filename.split(".").pop()?.toLowerCase() || "unknown",
         fileSize: BigInt(buffer.length),

@@ -92,7 +92,8 @@ export class FileStorageService {
         .from(this.config.bucketName)
         .upload(filePath, buffer, {
           contentType: this.getMimeType(filename),
-          upsert: options?.replaceExisting || false,
+          upsert: options?.replaceExisting || false, // Supabase storage uploads require 'duplex: "half"' when uploading a Buffer in Node.js.
+          // This is due to the way the fetch API handles streams and buffers; omitting this option can cause upload failures.
           duplex: "half",
         });
 

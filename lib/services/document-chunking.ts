@@ -390,9 +390,30 @@ export class DocumentChunkingService {
   }
 
   private estimateTokenCount(text: string): number {
-    // Rough estimation: ~4 characters per token for English text
-    // This is a simplified estimation; could be enhanced with actual tokenizer
-    return Math.ceil(text.length / 4);
+    // More sophisticated token estimation
+    // Note: This is still an approximation. For production use, consider:
+    // - Using an actual tokenizer like tiktoken for OpenAI models
+    // - Different ratios for different content types or languages
+    // - Caching token counts for repeated text
+
+    if (!text || text.length === 0) return 0;
+
+    // Base estimation using word count and character adjustments
+    const words = text.trim().split(/\s+/).length;
+
+    // Estimate tokens based on multiple factors:
+    // - Average English word ≈ 1.3 tokens
+    // - Add extra tokens for punctuation and special characters
+    const punctuationCount = (text.match(/[.!?,:;()[\]{}'"]/g) || []).length;
+    const specialCharCount = (text.match(/[^\w\s.!?,:;()[\]{}'"]/g) || [])
+      .length;
+
+    // Baseline: words * 1.3, plus penalties for complexity
+    const baseTokens = words * 1.3;
+    const punctuationTokens = punctuationCount * 0.2;
+    const specialTokens = specialCharCount * 0.3;
+
+    return Math.ceil(baseTokens + punctuationTokens + specialTokens);
   }
 
   private createError(

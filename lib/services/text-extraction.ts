@@ -191,14 +191,12 @@ export class TextExtractionService {
   }> {
     try {
       // Try different encodings
-      const encodings = ["utf8", "ascii", "latin1"];
+      const encodings: BufferEncoding[] = ["utf8", "ascii", "latin1"];
       let text = "";
-      let encoding = "utf8";
 
-      for (const enc of encodings) {
+      for (const encoding of encodings) {
         try {
-          text = buffer.toString(enc as BufferEncoding);
-          encoding = enc;
+          text = buffer.toString(encoding);
           break;
         } catch (error) {
           continue;

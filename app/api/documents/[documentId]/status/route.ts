@@ -136,9 +136,18 @@ function mapDocumentStatusToProgress(document: any): ProcessingProgress {
 }
 
 function estimateProcessingTime(fileSize: bigint, fileType: string): number {
-  // Convert bigint to number for calculation (in bytes)
-  const sizeInBytes = Number(fileSize);
-  const sizeInMB = sizeInBytes / (1024 * 1024);
+  // Safely handle large file sizes to avoid precision loss
+  const MAX_SAFE_BYTES = BigInt(Number.MAX_SAFE_INTEGER);
+  let safeSizeBytes = fileSize;
+
+  if (fileSize > MAX_SAFE_BYTES) {
+    // For extremely large files (> 9 PB), cap at MAX_SAFE_INTEGER for estimation
+    // In practice, the system should have file size limits well below this
+    safeSizeBytes = MAX_SAFE_BYTES;
+  }
+
+  // Calculate size in MB using BigInt arithmetic, then convert safely
+  const sizeInMB = Number(safeSizeBytes / BigInt(1024 * 1024));
 
   // Base time estimates per MB by file type (in seconds)
   const timePerMB = {
