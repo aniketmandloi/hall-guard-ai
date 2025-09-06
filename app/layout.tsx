@@ -8,33 +8,72 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://nextstarter.xyz/"),
+  metadataBase: new URL("https://hallguardai.com/"),
   title: {
-    default: "Next Starter",
-    template: `%s | Next Starter`,
+    default: "Hall Guard AI - Enterprise Hallucination Detection Platform",
+    template: `%s | Hall Guard AI`,
   },
   description:
-    "The Ultimate Nextjs 15 Starter Kit for quickly building your SaaS, giving you time to focus on what really matters",
+    "Enterprise-grade AI verification platform that detects factual errors, logical inconsistencies, and compliance violations in AI-generated content. Trusted by legal, financial, and healthcare organizations for critical document verification.",
+  keywords: [
+    "hallucination detection",
+    "AI verification",
+    "fact checking",
+    "compliance validation",
+    "document analysis",
+    "enterprise AI",
+    "SOX compliance",
+    "GDPR compliance",
+    "HIPAA compliance",
+    "risk assessment",
+    "AI audit",
+    "content verification",
+  ],
   openGraph: {
+    title: "Hall Guard AI - Enterprise Hallucination Detection Platform",
     description:
-      "The Ultimate Nextjs 15 Starter Kit for quickly building your SaaS, giving you time to focus on what really matters",
+      "Enterprise-grade AI verification platform that detects factual errors, logical inconsistencies, and compliance violations in AI-generated content. Multi-AI consensus with role-based workflow management.",
+    type: "website",
+    locale: "en_US",
+    siteName: "Hall Guard AI",
     images: [
-      "https://dwdwn8b5ye.ufs.sh/f/MD2AM9SEY8GucGJl7b5qyE7FjNDKYduLOG2QHWh3f5RgSi0c",
+      {
+        url: "https://hallguardai.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Hall Guard AI - Enterprise Hallucination Detection Platform",
+      },
     ],
-    url: "https://nextstarter.xyz/",
+    url: "https://hallguardai.com/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nextjs Starter Kit",
+    title: "Hall Guard AI - Enterprise Hallucination Detection Platform",
     description:
-      "The Ultimate Nextjs 15 Starter Kit for quickly building your SaaS, giving you time to focus on what really matters",
-    siteId: "",
-    creator: "@rasmickyy",
-    creatorId: "",
+      "Enterprise-grade AI verification platform for detecting factual errors, logical inconsistencies, and compliance violations in AI-generated content.",
+    site: "@HallGuardAI",
+    creator: "@HallGuardAI",
     images: [
-      "https://dwdwn8b5ye.ufs.sh/f/MD2AM9SEY8GucGJl7b5qyE7FjNDKYduLOG2QHWh3f5RgSi0c",
+      {
+        url: "https://hallguardai.com/twitter-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Hall Guard AI - Enterprise Hallucination Detection",
+      },
     ],
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  category: "Enterprise Software",
 };
 
 export default function RootLayout({
