@@ -12,7 +12,17 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@clerk/nextjs";
 import { Dialog } from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
-import { FileText, Github, Menu, Shield, Users } from "lucide-react";
+import {
+  FileText,
+  Github,
+  Menu,
+  Shield,
+  Users,
+  FolderOpen,
+  BarChart3,
+  ShieldCheck,
+  Code,
+} from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import ModeToggle from "../mode-toggle";
@@ -32,14 +42,24 @@ const components: { title: string; href: string; description: string }[] = [
     description: "Interact with the AI in the playground.",
   },
   {
-    title: "Dashboard",
-    href: "/dashboard",
-    description: "Access your analysis dashboard.",
+    title: "Document Management",
+    href: "/dashboard/documents",
+    description: "Upload and manage documents for hallucination detection.",
   },
   {
-    title: "Documentation",
-    href: "/docs",
-    description: "Learn how to use Hall Guard AI effectively.",
+    title: "Analysis Dashboard",
+    href: "/dashboard/analysis",
+    description: "View detailed analysis results and confidence scores.",
+  },
+  {
+    title: "Compliance Center",
+    href: "/dashboard/compliance",
+    description: "SOX, GDPR, and HIPAA compliance monitoring and reporting.",
+  },
+  {
+    title: "API Documentation",
+    href: "/api-docs",
+    description: "Integrate Hall Guard AI into your enterprise systems.",
   },
 ];
 
@@ -79,16 +99,26 @@ export default function NavBar() {
                   <h2 className="text-sm font-medium text-muted-foreground mb-2">
                     Navigation
                   </h2>
-                  {components.map((item) => (
-                    <Link key={item.href} href={item.href} prefetch={true}>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-base font-normal h-11 border border-muted/40 mb-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition-colors"
-                      >
-                        {item.title}
-                      </Button>
-                    </Link>
-                  ))}
+                  {components.map((item, index) => {
+                    const icons = [
+                      null,
+                      <FolderOpen className="h-4 w-4 mr-2" key="folder" />,
+                      <BarChart3 className="h-4 w-4 mr-2" key="chart" />,
+                      <ShieldCheck className="h-4 w-4 mr-2" key="shield" />,
+                      <Code className="h-4 w-4 mr-2" key="code" />,
+                    ];
+                    return (
+                      <Link key={item.href} href={item.href} prefetch={true}>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-base font-normal h-11 border border-muted/40 mb-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition-colors"
+                        >
+                          {icons[index]}
+                          {item.title}
+                        </Button>
+                      </Link>
+                    );
+                  })}
                 </div>
 
                 <div className="px-2 py-4 border-t">
@@ -180,8 +210,19 @@ export default function NavBar() {
           <Link href="/dashboard" prefetch={true}>
             <Button variant="ghost">Dashboard</Button>
           </Link>
+          <Link href="/dashboard/documents" prefetch={true}>
+            <Button variant="ghost">Documents</Button>
+          </Link>
           <Link href="/playground" prefetch={true}>
             <Button variant="ghost">AI Playground</Button>
+          </Link>
+          <Link href="/contact" prefetch={true}>
+            <Button
+              variant="outline"
+              className="border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950/50"
+            >
+              Contact Sales
+            </Button>
           </Link>
           <Link
             href="https://github.com/aniketmandloi/hall-guard-ai"
